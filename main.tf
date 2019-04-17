@@ -23,7 +23,7 @@ resource "aws_elasticache_replication_group" "redis" {
 }
 
 resource "aws_elasticache_parameter_group" "redis_parameter_group" {
-  name        = "${replace(format("%.255s", lower(replace("tf-redis-${var.name}-${var.env}-${data.aws_vpc.vpc.tags["Name"]}-${random_id.salt.result}", "_", "-"))), "/\\s/", "-")}"
+  name        = "${replace(format("%.255s", lower(replace("tf-redis-${var.name}-${var.env}-${data.aws_vpc.vpc.tags["Name"]}-${random_id.salt.hex}", "_", "-"))), "/\\s/", "-")}"
   description = "Terraform-managed ElastiCache parameter group for ${var.name}-${var.env}-${data.aws_vpc.vpc.tags["Name"]}"
 
   # Strip the patch version from redis_version var
