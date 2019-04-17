@@ -1,9 +1,8 @@
 data "aws_vpc" "vpc" {
   id = "${var.vpc_id}"
 }
-resource "random_integer" "priority" {
-  min     = 1
-  max     = 99999
+resource "random_id" "salt" {
+  byte_length = 8
 }
 resource "aws_elasticache_replication_group" "redis" {
   replication_group_id          = "${format("%.20s","${var.name}-${var.env}")}"
@@ -24,7 +23,7 @@ resource "aws_elasticache_replication_group" "redis" {
 }
 
 resource "aws_elasticache_parameter_group" "redis_parameter_group" {
-  name        = "${replace(format("%.255s", lower(replace("tf-redis-${var.name}-${var.env}-${data.aws_vpc.vpc.tags["Name"]}-${random_integer.priority.result}", "_", "-"))), "/\\s/", "-")}"
+  name        = "${replace(format("%.255s", lower(replace("tf-redis-${var.name}-${var.env}-${data.aws_vpc.vpc.tags["Name"]}-${random_id.salt.result}", "_", "-"))), "/\\s/", "-")}"
   description = "Terraform-managed ElastiCache parameter group for ${var.name}-${var.env}-${data.aws_vpc.vpc.tags["Name"]}"
 
   # Strip the patch version from redis_version var
